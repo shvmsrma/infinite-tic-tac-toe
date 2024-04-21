@@ -1,15 +1,17 @@
 import { React, useState, useEffect } from "react";
 import "./styles.css";
-const initialArray = Array(9)
-  .fill()
-  .map((_, idx) => ({
-    value: "",
-    enabled: true,
-    index: idx,
-    moveNumber: 0,
-  }));
+const initialArray = function () {
+  return Array(9)
+    .fill()
+    .map((_, idx) => ({
+      value: "",
+      enabled: true,
+      index: idx,
+      moveNumber: 0,
+    }));
+};
 export default function TicTacToe() {
-  const [value, setValue] = useState(initialArray);
+  const [value, setValue] = useState(initialArray());
   const [currentTurn, setCurrentTurn] = useState("O");
   const [moveCount, setMoveCount] = useState(0);
   const [winner, setWinner] = useState("");
@@ -96,9 +98,9 @@ export default function TicTacToe() {
   };
 
   function resetGame() {
+    setValue(initialArray());
     setShowReset(false);
     setMoveCount(0);
-    setValue([...initialArray]);
     setWinner("");
     setCurrentTurn("O");
 
