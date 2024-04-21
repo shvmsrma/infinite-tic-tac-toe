@@ -1,20 +1,19 @@
 import { React, useState, useEffect } from "react";
 import "./styles.css";
-
+const initialArray = Array(9)
+  .fill()
+  .map((_, idx) => ({
+    value: "",
+    enabled: true,
+    index: idx,
+    moveNumber: 0,
+  }));
 export default function TicTacToe() {
-  const [value, setValue] = useState(
-    Array(9)
-      .fill()
-      .map((_, idx) => ({
-        value: "",
-        enabled: true,
-        index: idx,
-        moveNumber: 0,
-      }))
-  );
+  const [value, setValue] = useState(initialArray);
   const [currentTurn, setCurrentTurn] = useState("O");
   const [moveCount, setMoveCount] = useState(0);
   const [winner, setWinner] = useState("");
+  const [showReset, setShowReset] = useState(false);
   const onClickBox = (e, index) => {
     e.preventDefault();
     if (!value[index].enabled) {
@@ -27,9 +26,7 @@ export default function TicTacToe() {
     setValue(tempArr);
     setCurrentTurn(currentTurn === "O" ? "X" : "O");
     setMoveCount(moveCount + 1);
-  };
 
-  useEffect(() => {
     const winner = checkWinner();
     if (!winner) {
       let moves = value
@@ -53,8 +50,12 @@ export default function TicTacToe() {
 
     if (winner) {
       setWinner(winner);
+      setShowReset(true);
+      setTimeout(() => {
+        resetGame();
+      }, 5000);
     }
-  }, [value, currentTurn]);
+  };
 
   const revertMove = (player) => {
     let tempArr = [...value];
@@ -94,6 +95,16 @@ export default function TicTacToe() {
     return null;
   };
 
+  function resetGame() {
+    setShowReset(false);
+    setMoveCount(0);
+    setValue([...initialArray]);
+    setWinner("");
+    setCurrentTurn("O");
+
+    console.log("debug", showReset, moveCount, value, winner, currentTurn);
+  }
+
   return (
     <div className="flex flex-col">
       <div className="grid grid-cols-3">
@@ -111,6 +122,7 @@ export default function TicTacToe() {
       </div>
       {winner && <div>{winner} Wins!!!</div>}
       <span className="text-2xl mt-8">{currentTurn}'s turn</span>
+      {showReset && <span>Resetting game in 5 seconds</span>}
     </div>
   );
 }
